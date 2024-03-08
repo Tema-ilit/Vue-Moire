@@ -1,6 +1,21 @@
 <script setup lang="ts">
+import { getProducts } from '@/api/product'
 import ProductFilter from '@/components/ProductFilter.vue'
-import ProductList from '@/components/ProductList.vue'
+import ProductItem from '@/components/ProductItem.vue'
+import type { IProduct } from '@/types/products'
+import { onMounted, ref } from 'vue'
+
+const products = ref<IProduct[]>([])
+
+const loadProducts = async () => {
+  const response = await getProducts()
+
+  products.value = response
+}
+
+onMounted(async () => {
+  await loadProducts()
+})
 </script>
 
 <template>
@@ -16,7 +31,10 @@ import ProductList from '@/components/ProductList.vue'
       <ProductFilter />
 
       <section class="catalog">
-        <ProductList />
+        <ul class="catalog__list">
+          <ProductItem v-for="product in products" :key="product.id" :product="product" />
+        </ul>
+        <!-- <ProductList :products="products" /> -->
 
         <ul class="catalog__pagination pagination">
           <li class="pagination__item">
