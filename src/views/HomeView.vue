@@ -2,19 +2,25 @@
 import { getProducts } from '@/api/product'
 import ProductFilter from '@/components/ProductFilter.vue'
 import ProductItem from '@/components/ProductItem.vue'
+import type { IPagination } from '@/types/global'
 import type { IProduct } from '@/types/products'
 import { onMounted, ref } from 'vue'
 
 const products = ref<IProduct[]>([])
+const pagination = ref<IPagination>({
+  page: 1,
+  pages: 0,
+  total: 0
+})
 
-const loadProducts = async () => {
+const loadProducts = async (page: number) => {
   const response = await getProducts()
 
-  products.value = response
+  products.value = response.products
 }
 
 onMounted(async () => {
-  await loadProducts()
+  await loadProducts(pagination.value.page)
 })
 </script>
 
@@ -34,7 +40,6 @@ onMounted(async () => {
         <ul class="catalog__list">
           <ProductItem v-for="product in products" :key="product.id" :product="product" />
         </ul>
-        <!-- <ProductList :products="products" /> -->
 
         <ul class="catalog__pagination pagination">
           <li class="pagination__item">

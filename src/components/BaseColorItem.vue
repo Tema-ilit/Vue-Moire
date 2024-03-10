@@ -1,7 +1,5 @@
 <script setup lang="ts">
-defineProps({
-  color: Object
-})
+const props = defineProps()
 </script>
 
 <template>
