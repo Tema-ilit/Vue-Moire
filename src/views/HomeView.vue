@@ -5,13 +5,27 @@ import ProductFilter from '@/components/ProductFilter.vue'
 import ProductItem from '@/components/ProductItem.vue'
 import type { IPagination } from '@/types/global'
 import type { IProduct } from '@/types/products'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 const products = ref<IProduct[]>([])
 const pagination = ref<IPagination>({
   page: 1,
   pages: 0,
   total: 0
+})
+
+const minPrice = ref<number | null>(null)
+const maxPrice = ref<number | null>(null)
+
+const filteredComputed = computed(() => {
+  return products.value.filter((product) => {
+    if (
+      (minPrice.value && product.price < minPrice.value) ||
+      (maxPrice.value && product.price > maxPrice.value)
+    )
+      return false
+    return true
+  })
 })
 
 const loadProducts = async (page: number) => {
@@ -29,6 +43,7 @@ const changePage = async (page: number) => {
 
 onMounted(async () => {
   await loadProducts(pagination.value.page)
+  console.log(products)
 })
 </script>
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { IProduct } from '@/types/products'
 import BaseColorList from './BaseColorList.vue'
+import { computed } from 'vue'
 
 const props = defineProps<{ product: IProduct }>()
 </script>
@@ -18,7 +19,7 @@ const props = defineProps<{ product: IProduct }>()
 
       <span class="catalog__price"> {{ product.price }} ₽ </span>
 
-      <!-- <BaseColorList :colors="product.colors" /> -->
+      <BaseColorList :colors="product.colors" />
     </li>
   </div>
 </template>
