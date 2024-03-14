@@ -1,4 +1,15 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const emit = defineEmits(['update:price-filter'])
+
+const minPrice = ref<number>()
+const maxPrice = ref<number>()
+
+const goUpdatePrice = (minPrice: number | undefined, maxPrice: number | undefined) => {
+  emit('update:price-filter', minPrice, maxPrice)
+}
+</script>
 
 <template>
   <aside class="filter">
@@ -6,11 +17,11 @@
       <fieldset class="form__block">
         <legend class="form__legend">Цена</legend>
         <label class="form__label form__label--price">
-          <input class="form__input" type="text" name="min-price" value="0" />
+          <input class="form__input" type="text" name="min-price" v-model="minPrice" />
           <span class="form__value">От</span>
         </label>
         <label class="form__label form__label--price">
-          <input class="form__input" type="text" name="max-price" value="12345" />
+          <input class="form__input" type="text" name="max-price" v-model="maxPrice" />
           <span class="form__value">До</span>
         </label>
       </fieldset>
@@ -152,8 +163,20 @@
         </ul>
       </fieldset>
 
-      <button class="filter__submit button button--primery" type="submit">Применить</button>
-      <button class="filter__reset button button--second" type="button">Сбросить</button>
+      <button
+        class="filter__submit button button--primery"
+        type="submit"
+        @click.prevent="goUpdatePrice(minPrice, maxPrice)"
+      >
+        Применить
+      </button>
+      <button
+        class="filter__reset button button--second"
+        type="button"
+        @click.prevent="goUpdatePrice(0, 0)"
+      >
+        Сбросить
+      </button>
     </form>
   </aside>
 </template>

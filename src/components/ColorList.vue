@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { IColor } from '@/types/colorsProduct'
-import BaseColorItem from './BaseColorItem.vue'
+import BaseColorItem from './ColorItem.vue'
 
-defineProps<{ colors: Array<IColor> }>()
+defineProps<{ colors: Array<IColor> | undefined }>()
 </script>
 
 <template>
@@ -10,3 +10,4 @@ defineProps<{ colors: Array<IColor> }>()
     <BaseColorItem v-for="color in colors" :key="color.id" :color="color" />
   </ul>
 </template>
+./ColorItem.vue

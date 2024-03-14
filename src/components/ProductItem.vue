@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { IProduct } from '@/types/products'
-import BaseColorList from './BaseColorList.vue'
-import { computed } from 'vue'
+import BaseColorList from './ColorList.vue'
 
 const props = defineProps<{ product: IProduct }>()
 </script>
@@ -9,9 +8,13 @@ const props = defineProps<{ product: IProduct }>()
 <template>
   <div>
     <li class="catalog__item">
-      <a class="catalog__pic" href="#">
+      <router-link
+        :to="{ name: 'product', params: { id: product.id } }"
+        class="catalog__pic"
+        href="#"
+      >
         <img :src="product.colors[0]?.gallery[0]?.file.url" :alt="product.title" />
-      </a>
+      </router-link>
 
       <h3 class="catalog__title">
         <a href="#"> {{ product.title }} </a>
@@ -23,3 +26,4 @@ const props = defineProps<{ product: IProduct }>()
     </li>
   </div>
 </template>
+./ColorList.vue

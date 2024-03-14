@@ -12,12 +12,18 @@ const router = createRouter({
     {
       path: '/basket',
       name: 'basket',
-      component: () => import('../views/ProductBasket.vue')
+      component: () => import('../views/BasketView.vue')
     },
     {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('../views/NotFound.vue')
+    },
+    {
+      path: '/product/:id',
+      name: 'product',
+      component: () => import('../views/ProductView.vue'),
+      props: true
     }
   ]
 })

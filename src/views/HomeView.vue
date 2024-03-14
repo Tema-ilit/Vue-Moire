@@ -16,6 +16,12 @@ const pagination = ref<IPagination>({
 
 const minPrice = ref<number | null>(null)
 const maxPrice = ref<number | null>(null)
+console.log(minPrice, maxPrice)
+
+const updatePriceFilter = (a: number, b: number) => {
+  minPrice.value = a
+  maxPrice.value = b
+}
 
 const filteredComputed = computed(() => {
   return products.value.filter((product) => {
@@ -43,7 +49,6 @@ const changePage = async (page: number) => {
 
 onMounted(async () => {
   await loadProducts(pagination.value.page)
-  console.log(products)
 })
 </script>
 
@@ -57,11 +62,11 @@ onMounted(async () => {
     </div>
 
     <div class="content__catalog">
-      <ProductFilter />
+      <ProductFilter @update:price-filter="updatePriceFilter" />
 
       <section class="catalog">
         <ul class="catalog__list">
-          <ProductItem v-for="product in products" :key="product.id" :product="product" />
+          <ProductItem v-for="product in filteredComputed" :key="product.id" :product="product" />
         </ul>
 
         <BasePagination

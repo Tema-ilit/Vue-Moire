@@ -1,4 +1,5 @@
 import type { IPagination } from '@/types/global'
+import type { IProductCart } from '@/types/productCart'
 import type { IProduct } from '@/types/products'
 import axios from 'axios'
 
@@ -24,5 +25,18 @@ export const getProducts = async (page: number = 1): Promise<IResponseProducts> 
   } catch (err) {
     console.log(err)
     throw new Error('Ошибочка')
+  }
+}
+
+export const getProductId = async (id: number) => {
+  try {
+    const { data } = await axios.get(BASE_URL + '/products/' + id)
+
+    const product = data
+
+    return product
+  } catch (error) {
+    console.log(error)
+    throw new Error('error')
   }
 }
