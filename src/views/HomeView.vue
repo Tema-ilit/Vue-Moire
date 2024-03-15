@@ -14,11 +14,10 @@ const pagination = ref<IPagination>({
   total: 0
 })
 
-const minPrice = ref<number | null>(null)
-const maxPrice = ref<number | null>(null)
-console.log(minPrice, maxPrice)
+const minPrice = ref<number>()
+const maxPrice = ref<number>()
 
-const updatePriceFilter = (a: number, b: number) => {
+const updatePrice = (a: number, b: number) => {
   minPrice.value = a
   maxPrice.value = b
 }
@@ -34,11 +33,16 @@ const filteredComputed = computed(() => {
   })
 })
 
+let normalProduct = []
+
 const loadProducts = async (page: number) => {
   const response = await getProducts(page)
 
   products.value = response.products
   pagination.value = response.pagination
+
+  normalProduct = [...products.value]
+  console.log(normalProduct)
 }
 
 const changePage = async (page: number) => {
@@ -62,12 +66,16 @@ onMounted(async () => {
     </div>
 
     <div class="content__catalog">
-      <ProductFilter @update:price-filter="updatePriceFilter" />
+      <ProductFilter @update:price-filter="updatePrice" />
 
       <section class="catalog">
-        <ul class="catalog__list">
-          <ProductItem v-for="product in filteredComputed" :key="product.id" :product="product" />
-        </ul>
+        <div>
+          <ul class="catalog__list">
+            <li v-for="product in filteredComputed" :key="product.id" class="catalog__item">
+              <ProductItem :product="product" />
+            </li>
+          </ul>
+        </div>
 
         <BasePagination
           :current-page="pagination.page"

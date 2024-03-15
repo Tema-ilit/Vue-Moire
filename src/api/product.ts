@@ -1,5 +1,4 @@
 import type { IPagination } from '@/types/global'
-import type { IProductCart } from '@/types/productCart'
 import type { IProduct } from '@/types/products'
 import axios from 'axios'
 
@@ -13,7 +12,7 @@ interface IResponseProducts {
 export const getProducts = async (page: number = 1): Promise<IResponseProducts> => {
   try {
     const response = await axios.get(BASE_URL + '/products', {
-      params: { page: String(page), limit: String(6) }
+      params: { page: String(page), limit: String(13) }
     })
 
     const products: IProduct[] = response.data.items

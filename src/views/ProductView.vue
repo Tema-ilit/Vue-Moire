@@ -1,18 +1,61 @@
 <script setup lang="ts">
 import { getProductId } from '@/api/product'
-import BaseColorList from '@/components/ColorList.vue'
 import SizesList from '@/components/SizesList.vue'
+import TestColor from '@/components/TestColor.vue'
 import type { IProductCart } from '@/types/productCart'
-import { onMounted, ref } from 'vue'
+import TabsGlobal from '@/utils/TabsGlobal.vue'
+import { computed, onMounted, ref, watch } from 'vue'
 
 const props = defineProps<{ id: number }>()
 const product = ref<IProductCart>()
+
+//tabs
+const tabs = [
+  { name: 'information', label: 'Информация о товаре' },
+  { name: 'delivery', label: 'Доставка и возврат' }
+]
+const selectedTab = ref('information')
+const changeTab = (tabName: string) => {
+  selectedTab.value = tabName
+}
+// end tabs
+
+const color = ref<{
+  id: number
+  color: {
+    id: number
+    title: string
+    code: string
+  }
+  gallery: [
+    {
+      file: {
+        url: string
+        name: string
+        originalName: string
+        extension: string
+        size: number & string
+      }
+    }
+  ]
+}>()
 
 const loadProduct = async (id: number) => {
   const response = await getProductId(id)
 
   product.value = response
 }
+
+watch(product, (product) => {
+  color.value = product?.colors[0]
+})
+
+const materialPercent = computed(() =>
+  product.value?.materials.reduce(
+    (acc, material) => acc + Math.round(material.productsCount) / 100,
+    0
+  )
+)
 
 onMounted(() => {
   loadProduct(props.id)
@@ -24,15 +67,15 @@ onMounted(() => {
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <RouterLink :to="{ name: 'home' }" class="breadcrumbs__link" href="index.html">
-            Каталог
+          <RouterLink :to="{ name: 'home' }" class="breadcrumbs__link"> Каталог </RouterLink>
+        </li>
+        <li class="breadcrumbs__item">
+          <RouterLink :to="{ name: 'home' }" class="breadcrumbs__link">
+            {{ product?.category.title }}
           </RouterLink>
         </li>
         <li class="breadcrumbs__item">
-          <RouterLink :to="{ name: 'home' }" class="breadcrumbs__link" href="#"> Носки </RouterLink>
-        </li>
-        <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link"> Носки с принтом мороженое </a>
+          <a class="breadcrumbs__link"> {{ product?.title }} </a>
         </li>
       </ul>
     </div>
@@ -40,22 +83,12 @@ onMounted(() => {
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img
-            width="570"
-            height="570"
-            :src="product?.colors[0]?.gallery[0]?.file.url"
-            :alt="product?.title"
-          />
+          <img width="570" height="570" :src="color?.gallery?.[0].file.url" :alt="product?.title" />
         </div>
-        <ul class="pics__list">
-          <li class="pics__item">
-            <a href="" class="pics__link pics__link--current">
-              <img width="98" height="98" src="" :alt="product?.title" />
-            </a>
-          </li>
-          <li class="pics__item">
-            <a href="" class="pics__link">
-              <img width="98" height="98" src="" :alt="product?.title" />
+        <ul v-if="color?.gallery" class="pics__list">
+          <li v-for="item in color.gallery" :key="item.file.name" class="pics__item">
+            <a class="pics__link pics__link--current">
+              <img width="98" height="98" :src="item.file.url" :alt="product?.title" />
             </a>
           </li>
         </ul>
@@ -89,7 +122,30 @@ onMounted(() => {
             <div class="item__row">
               <fieldset class="form__block">
                 <legend class="form__legend">Цвет</legend>
-                <BaseColorList :colors="product?.colors" />
+                <!-- <BaseColorList :colors="product?.colors" /> -->
+
+                <!-- <ul class="colors colors--black">
+                  <li v-for="items in product?.colors" :key="items.id" class="colors__item">
+                    <TestColor :color="items" />
+                  </li>
+                </ul> -->
+
+                <ul class="colors colors--black">
+                  <li v-for="item in product?.colors" :key="item.id" class="colors__item">
+                    <label class="colors__label">
+                      <input
+                        class="colors__radio sr-only"
+                        type="radio"
+                        :value="item"
+                        v-model="color"
+                      />
+                      <span
+                        class="colors__value"
+                        :style="{ 'background-color': item.color.code }"
+                      ></span>
+                    </label>
+                  </li>
+                </ul>
               </fieldset>
 
               <fieldset class="form__block">
@@ -108,31 +164,47 @@ onMounted(() => {
       <div class="item__desc">
         <ul class="tabs">
           <li class="tabs__item">
-            <a class="tabs__link tabs__link--current"> Информация о товаре </a>
-          </li>
-          <li class="tabs__item">
-            <a class="tabs__link" href="#"> Доставка и возврат </a>
+            <TabsGlobal :names="tabs" :selected-tab="selectedTab" @change-tab="changeTab">
+              <div v-if="selectedTab === 'information'" class="item__content">
+                <h3>Состав:</h3>
+
+                <p v-for="material in product?.materials" :key="material.id">
+                  <span>{{ Math.round(material.productsCount / (materialPercent || 0)) }} % </span>
+                  <span>{{ material.title }}</span>
+                </p>
+
+                <h3>Уход:</h3>
+
+                <p>
+                  Машинная стирка при макс. 30ºC короткий отжим<br />
+                  Гладить при макс. 110ºC<br />
+                  Не использовать машинную сушку<br />
+                  Отбеливать запрещено<br />
+                  Не подвергать химчистке<br />
+                </p>
+              </div>
+
+              <div v-if="selectedTab === 'delivery'" class="item__content">
+                <h3>Доставка:</h3>
+
+                <p>
+                  1. Курьерская доставка по Москве и Московской области – 290 ₽<br />
+                  2.Самовывоз из магазина. Список и адреса магазинов Вы можете посмотреть здесь<br />
+                </p>
+
+                <h3>Возврат:</h3>
+
+                <p>
+                  Любой возврат должен быть осуществлен в течение Возвраты в магазине БЕСПЛАТНО.<br />
+                  Вы можете вернуть товары в любой магазин. Магазин должен быть расположен в стране,
+                  в которой Вы осуществили покупку. БЕСПЛАТНЫЙ возврат в Пункт выдачи заказов.<br />
+                  Для того чтобы вернуть товар в одном из наших Пунктов выдачи заказов, позвоните по
+                  телефону 8 800 600 90 09<br />
+                </p>
+              </div>
+            </TabsGlobal>
           </li>
         </ul>
-
-        <div class="item__content">
-          <h3>Состав:</h3>
-
-          <p>
-            60% {{ product?.materials[0].title }}<br />
-            30% Шерсть<br />
-          </p>
-
-          <h3>Уход:</h3>
-
-          <p>
-            Машинная стирка при макс. 30ºC короткий отжим<br />
-            Гладить при макс. 110ºC<br />
-            Не использовать машинную сушку<br />
-            Отбеливать запрещено<br />
-            Не подвергать химчистке<br />
-          </p>
-        </div>
       </div>
     </section>
   </div>

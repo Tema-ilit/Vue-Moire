@@ -1,13 +1,43 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import type { ICategories } from '@/types/categories'
+import type { IMaterials } from '@/types/materials'
+import axios from 'axios'
+import { onMounted, ref } from 'vue'
+import SelectGlobal from './SelectGlobal.vue'
 
-const emit = defineEmits(['update:price-filter'])
+defineEmits(['update:price-filter'])
 
 const minPrice = ref<number>()
 const maxPrice = ref<number>()
 
-const goUpdatePrice = (minPrice: number | undefined, maxPrice: number | undefined) => {
-  emit('update:price-filter', minPrice, maxPrice)
+const filterMaterials = ref<IMaterials>()
+const filterSeasons = ref<IMaterials>()
+const filterCategories = ref<ICategories>()
+
+const getFilterInfo = async (url: string) => {
+  try {
+    const { data } = await axios.get(`https://vue-moire.skillbox.cc/api` + url)
+    const res = data
+    return res
+  } catch (error) {
+    console.log(error)
+    throw new Error()
+  }
+}
+
+onMounted(async () => {
+  const materials = await getFilterInfo('/materials')
+  const seasons = await getFilterInfo('/seasons')
+  const categories = await getFilterInfo('/productCategories')
+
+  filterMaterials.value = materials
+  filterSeasons.value = seasons
+  filterCategories.value = categories
+})
+
+const reset = () => {
+  maxPrice.value = 0
+  minPrice.value = 0
 }
 </script>
 
@@ -25,15 +55,21 @@ const goUpdatePrice = (minPrice: number | undefined, maxPrice: number | undefine
           <span class="form__value">До</span>
         </label>
       </fieldset>
-
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
-          <select class="form__select" type="text" name="category">
+          <!-- <select class="form__select" type="text" name="category">
             <option value="value1">Все категории</option>
             <option value="value2">Футболки</option>
             <option value="value3">Бюстгалтеры</option>
             <option value="value4">Носки</option>
+          </select> -->
+
+          <select class="form__select" type="text" name="category">
+            <option value="value1">Все категории</option>
+            <option v-for="option in filterCategories?.items" :key="option.id" :value="option.id">
+              <SelectGlobal :category="option" />
+            </option>
           </select>
         </label>
       </fieldset>
@@ -166,14 +202,14 @@ const goUpdatePrice = (minPrice: number | undefined, maxPrice: number | undefine
       <button
         class="filter__submit button button--primery"
         type="submit"
-        @click.prevent="goUpdatePrice(minPrice, maxPrice)"
+        @click.prevent="$emit('update:price-filter', minPrice, maxPrice)"
       >
         Применить
       </button>
       <button
         class="filter__reset button button--second"
         type="button"
-        @click.prevent="goUpdatePrice(0, 0)"
+        @click.prevent="$emit('update:price-filter', 0, 0), reset()"
       >
         Сбросить
       </button>
