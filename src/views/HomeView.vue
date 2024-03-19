@@ -14,8 +14,8 @@ const pagination = ref<IPagination>({
   total: 0
 })
 
-const minPrice = ref<number>()
-const maxPrice = ref<number>()
+const minPrice = ref<number>(0)
+const maxPrice = ref<number>(0)
 
 const updatePrice = (a: number, b: number) => {
   minPrice.value = a
@@ -33,16 +33,11 @@ const filteredComputed = computed(() => {
   })
 })
 
-let normalProduct = []
-
 const loadProducts = async (page: number) => {
   const response = await getProducts(page)
 
   products.value = response.products
   pagination.value = response.pagination
-
-  normalProduct = [...products.value]
-  console.log(normalProduct)
 }
 
 const changePage = async (page: number) => {

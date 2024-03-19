@@ -1,14 +1,41 @@
 <script setup lang="ts">
 import type { IProduct } from '@/types/products'
-import BaseColorList from './ColorList.vue'
+import GlobalColor from './GlobalColor.vue'
+import { onMounted, ref } from 'vue'
 
-defineProps<{ product: IProduct }>()
+const props = defineProps<{ product: IProduct }>()
+const currentColor = ref<{
+  id: number
+  color: {
+    id: number
+    title: string
+    code: string
+  }
+  gallery: [
+    {
+      file: {
+        url: string
+        name: string
+        originalName: string
+        extension: string
+        size: number & string
+      }
+    }
+  ]
+}>()
+
+onMounted(() => {
+  currentColor.value = props.product.colors[0]
+})
 </script>
 
 <template>
   <div>
     <router-link :to="{ name: 'product', params: { id: product.id } }" class="catalog__pic">
-      <img :src="product.colors[0]?.gallery[0]?.file.url" :alt="product.title" />
+      <img
+        :src="currentColor ? currentColor.gallery[0].file.url : '../../public/no-photo.jpg'"
+        :alt="product.title"
+      />
     </router-link>
 
     <h3 class="catalog__title">
@@ -17,6 +44,7 @@ defineProps<{ product: IProduct }>()
 
     <span class="catalog__price"> {{ product.price }} ₽ </span>
 
-    <BaseColorList :colors="product.colors" />
+    <GlobalColor :colors="product.colors" v-model:colormodel="currentColor" />
   </div>
 </template>
+./GlobalColor.vue

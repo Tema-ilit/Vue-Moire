@@ -1,26 +1,15 @@
 <script setup lang="ts">
 import { getProductId } from '@/api/product'
+import GlobalColor from '@/components/GlobalColor.vue'
 import SizesList from '@/components/SizesList.vue'
-import TestColor from '@/components/TestColor.vue'
 import type { IProductCart } from '@/types/productCart'
 import TabsGlobal from '@/utils/TabsGlobal.vue'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
 const props = defineProps<{ id: number }>()
 const product = ref<IProductCart>()
 
-//tabs
-const tabs = [
-  { name: 'information', label: 'Информация о товаре' },
-  { name: 'delivery', label: 'Доставка и возврат' }
-]
-const selectedTab = ref('information')
-const changeTab = (tabName: string) => {
-  selectedTab.value = tabName
-}
-// end tabs
-
-const color = ref<{
+const currentColor = ref<{
   id: number
   color: {
     id: number
@@ -40,16 +29,26 @@ const color = ref<{
   ]
 }>()
 
+//tabs
+const tabs = [
+  { name: 'information', label: 'Информация о товаре' },
+  { name: 'delivery', label: 'Доставка и возврат' }
+]
+const selectedTab = ref('information')
+const changeTab = (tabName: string) => {
+  selectedTab.value = tabName
+}
+// end tabs
+
+//Полуваем продукт и передаем цвет по умолчанию
 const loadProduct = async (id: number) => {
   const response = await getProductId(id)
 
   product.value = response
+  currentColor.value = product.value?.colors[0]
 }
 
-watch(product, (product) => {
-  color.value = product?.colors[0]
-})
-
+//Вычисляем процент материала
 const materialPercent = computed(() =>
   product.value?.materials.reduce(
     (acc, material) => acc + Math.round(material.productsCount) / 100,
@@ -57,6 +56,7 @@ const materialPercent = computed(() =>
   )
 )
 
+//При рендере отправляем запрос на бек
 onMounted(() => {
   loadProduct(props.id)
 })
@@ -83,10 +83,15 @@ onMounted(() => {
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img width="570" height="570" :src="color?.gallery?.[0].file.url" :alt="product?.title" />
+          <img
+            width="570"
+            height="570"
+            :src="currentColor?.gallery?.[0].file.url"
+            :alt="product?.title"
+          />
         </div>
-        <ul v-if="color?.gallery" class="pics__list">
-          <li v-for="item in color.gallery" :key="item.file.name" class="pics__item">
+        <ul v-if="currentColor?.gallery" class="pics__list">
+          <li v-for="item in currentColor.gallery" :key="item.file.name" class="pics__item">
             <a class="pics__link pics__link--current">
               <img width="98" height="98" :src="item.file.url" :alt="product?.title" />
             </a>
@@ -122,30 +127,7 @@ onMounted(() => {
             <div class="item__row">
               <fieldset class="form__block">
                 <legend class="form__legend">Цвет</legend>
-                <!-- <BaseColorList :colors="product?.colors" /> -->
-
-                <!-- <ul class="colors colors--black">
-                  <li v-for="items in product?.colors" :key="items.id" class="colors__item">
-                    <TestColor :color="items" />
-                  </li>
-                </ul> -->
-
-                <ul class="colors colors--black">
-                  <li v-for="item in product?.colors" :key="item.id" class="colors__item">
-                    <label class="colors__label">
-                      <input
-                        class="colors__radio sr-only"
-                        type="radio"
-                        :value="item"
-                        v-model="color"
-                      />
-                      <span
-                        class="colors__value"
-                        :style="{ 'background-color': item.color.code }"
-                      ></span>
-                    </label>
-                  </li>
-                </ul>
+                <GlobalColor :colors="product?.colors" v-model:colormodel="currentColor" />
               </fieldset>
 
               <fieldset class="form__block">

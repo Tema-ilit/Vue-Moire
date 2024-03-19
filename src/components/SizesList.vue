@@ -6,6 +6,6 @@ const props = defineProps<{ sizes: ISizes[] | undefined }>()
 
 <template>
   <select class="form__select" type="text" name="category">
-    <SizesItem v-for="size in sizes" :key="size.id" :size="size" />
+    <option v-for="size in sizes" :key="size.id" :value="size.id">{{ size.title }}</option>
   </select>
 </template>
