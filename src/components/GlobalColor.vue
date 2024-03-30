@@ -1,26 +1,24 @@
 <script setup lang="ts">
-const prop = defineProps<{
-  colors:
-    | Array<{
-        id: number
-        color: {
-          id: number
-          title: string
-          code: string
+defineProps<{
+  colors?: Array<{
+    id: number
+    color: {
+      id: number
+      title: string
+      code: string
+    }
+    gallery: [
+      {
+        file: {
+          url: string
+          name: string
+          originalName: string
+          extension: string
+          size: number & string
         }
-        gallery: [
-          {
-            file: {
-              url: string
-              name: string
-              originalName: string
-              extension: string
-              size: number & string
-            }
-          }
-        ]
-      }>
-    | undefined
+      }
+    ]
+  }>
 }>()
 const colormodel = defineModel('colormodel')
 </script>
