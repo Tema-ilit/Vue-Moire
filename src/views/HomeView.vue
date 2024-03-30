@@ -6,6 +6,9 @@ import ProductItem from '@/components/ProductItem.vue'
 import type { IPagination } from '@/types/global'
 import type { IProduct } from '@/types/products'
 import { computed, onMounted, ref } from 'vue'
+// import { useProductsStore } from '@/stores/productsStore'
+
+// const productsStore = useProductsStore()
 
 const products = ref<IProduct[]>([])
 const pagination = ref<IPagination>({
@@ -14,6 +17,7 @@ const pagination = ref<IPagination>({
   total: 0
 })
 
+//Фильтр
 const minPrice = ref<number>(0)
 const maxPrice = ref<number>(0)
 
@@ -32,13 +36,16 @@ const filteredComputed = computed(() => {
     return true
   })
 })
+// конец фильтра
 
+//Загрузка товара
 const loadProducts = async (page: number) => {
   const response = await getProducts(page)
 
   products.value = response.products
   pagination.value = response.pagination
 }
+// end
 
 const changePage = async (page: number) => {
   if (page !== pagination.value.page) {

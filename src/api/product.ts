@@ -2,7 +2,7 @@ import type { IPagination } from '@/types/global'
 import type { IProduct } from '@/types/products'
 import axios from 'axios'
 
-const BASE_URL = 'https://vue-moire.skillbox.cc/api'
+export const BASE_URL = 'https://vue-moire.skillbox.cc/api'
 
 interface IResponseProducts {
   products: IProduct[]

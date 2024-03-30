@@ -3,6 +3,7 @@ export interface IProductCart {
   title: string
   slug: string
   price: number
+  quantity?: number
   category: {
     id: number
     slug: string

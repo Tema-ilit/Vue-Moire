@@ -1,4 +1,6 @@
+<!-- eslint-disable vue/valid-v-model -->
 <script setup lang="ts">
+import { addProductBasket } from '@/api/basket'
 import { getProductId } from '@/api/product'
 import GlobalColor from '@/components/GlobalColor.vue'
 import SizesList from '@/components/SizesList.vue'
@@ -8,26 +10,29 @@ import { computed, onMounted, ref } from 'vue'
 
 const props = defineProps<{ id: number }>()
 const product = ref<IProductCart>()
+const quantity = ref(1)
+const productSize = ref<number>()
+const currentColor = ref<number>()
 
-const currentColor = ref<{
-  id: number
-  color: {
-    id: number
-    title: string
-    code: string
-  }
-  gallery: [
-    {
-      file: {
-        url: string
-        name: string
-        originalName: string
-        extension: string
-        size: number & string
-      }
-    }
-  ]
-}>()
+// const currentColor = ref<{
+//   id: number
+//   color: {
+//     id: number
+//     title: string
+//     code: string
+//   }
+//   gallery: [
+//     {
+//       file: {
+//         url: string
+//         name: string
+//         originalName: string
+//         extension: string
+//         size: string
+//       }
+//     }
+//   ]
+// }>()
 
 //tabs
 const tabs = [
@@ -45,8 +50,17 @@ const loadProduct = async (id: number) => {
   const response = await getProductId(id)
 
   product.value = response
-  currentColor.value = product.value?.colors[0]
+  currentColor.value = product.value?.colors[0].color.id
+  productSize.value = product.value?.sizes[0].id
 }
+
+const img = computed(() => {
+  if (product.value?.colors[0].gallery?.[0].file.url)
+    return product.value.colors
+      .find((item) => item.color.id === currentColor.value)
+      ?.gallery.find((el) => el.file)?.file.url
+  return '../../public/no-photo.jpg'
+})
 
 //Вычисляем процент материала
 const materialPercent = computed(() =>
@@ -55,6 +69,16 @@ const materialPercent = computed(() =>
     0
   )
 )
+
+const addProduct = async (obj: IProductCart | undefined) => {
+  const newProduct = {
+    productId: obj?.id,
+    colorId: currentColor.value,
+    sizeId: productSize.value,
+    quantity: quantity
+  }
+  await addProductBasket(newProduct)
+}
 
 //При рендере отправляем запрос на бек
 onMounted(() => {
@@ -83,17 +107,12 @@ onMounted(() => {
     <section class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
-          <img
-            width="570"
-            height="570"
-            :src="currentColor?.gallery?.[0].file.url"
-            :alt="product?.title"
-          />
+          <img width="570" height="570" :src="img" :alt="product?.title" />
         </div>
-        <ul v-if="currentColor?.gallery" class="pics__list">
-          <li v-for="item in currentColor.gallery" :key="item.file.name" class="pics__item">
+        <ul v-if="product?.colors" class="pics__list">
+          <li v-for="item in product.colors[0].gallery" :key="item.file.name" class="pics__item">
             <a class="pics__link pics__link--current">
-              <img width="98" height="98" :src="item.file.url" :alt="product?.title" />
+              <img width="98" height="98" :src="img" :alt="product?.title" />
             </a>
           </li>
         </ul>
@@ -112,7 +131,7 @@ onMounted(() => {
                   </svg>
                 </button>
 
-                <input type="text" value="1" name="count" />
+                <input type="text" :value="quantity" :v-model="quantity" />
 
                 <button type="button" aria-label="Добавить один товар">
                   <svg width="12" height="12" fill="currentColor">
@@ -133,12 +152,18 @@ onMounted(() => {
               <fieldset class="form__block">
                 <legend class="form__legend">Размер</legend>
                 <label class="form__label form__label--small form__label--select">
-                  <SizesList :sizes="product?.sizes" />
+                  <SizesList :sizes="product?.sizes" v-model:productSize="productSize" />
                 </label>
               </fieldset>
             </div>
 
-            <button class="item__button button button--primery" type="submit">В корзину</button>
+            <button
+              class="item__button button button--primery"
+              type="submit"
+              @click.prevent="addProduct(product)"
+            >
+              В корзину
+            </button>
           </form>
         </div>
       </div>

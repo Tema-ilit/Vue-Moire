@@ -1,41 +1,28 @@
 <script setup lang="ts">
 import type { IProduct } from '@/types/products'
 import GlobalColor from './GlobalColor.vue'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 
-const props = defineProps<{ product: IProduct }>()
-const currentColor = ref<{
-  id: number
-  color: {
-    id: number
-    title: string
-    code: string
-  }
-  gallery: [
-    {
-      file: {
-        url: string
-        name: string
-        originalName: string
-        extension: string
-        size: number & string
-      }
-    }
-  ]
-}>()
+const prop = defineProps<{ product: IProduct }>()
+const currentColor = ref<number>()
+
+const img = computed(() => {
+  if (prop.product.colors[0].gallery?.[0].file.url)
+    return prop.product.colors
+      .find((item) => item.color.id === currentColor.value)
+      ?.gallery.find((el) => el.file)?.file.url
+  return '../../public/no-photo.jpg'
+})
 
 onMounted(() => {
-  currentColor.value = props.product.colors[0]
+  currentColor.value = prop.product.colors[0].color.id
 })
 </script>
 
 <template>
   <div>
     <router-link :to="{ name: 'product', params: { id: product.id } }" class="catalog__pic">
-      <img
-        :src="currentColor ? currentColor.gallery[0].file.url : '../../public/no-photo.jpg'"
-        :alt="product.title"
-      />
+      <img :src="img" :alt="product.title" />
     </router-link>
 
     <h3 class="catalog__title">
@@ -47,4 +34,3 @@ onMounted(() => {
     <GlobalColor :colors="product.colors" v-model:colormodel="currentColor" />
   </div>
 </template>
-./GlobalColor.vue

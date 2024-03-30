@@ -33,7 +33,7 @@ const colormodel = defineModel('colormodel')
           class="colors__radio sr-only"
           type="radio"
           :name="color.color.title"
-          :value="color"
+          :value="color.color.id"
           v-model="colormodel"
         />
         <span class="colors__value" :style="{ 'background-color': color.color.code }"> </span>

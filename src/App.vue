@@ -1,5 +1,14 @@
 <script setup lang="ts">
 import { RouterView, RouterLink } from 'vue-router'
+import { onMounted } from 'vue'
+import { useBasketStore } from '@/stores/basketStore'
+import { getBasket } from '@/api/basket'
+const basketStore = useBasketStore()
+//получаем корзину
+onMounted(async () => {
+  const basket = await getBasket()
+  basketStore.basketProducts = basket.items
+})
 </script>
 
 <template>
@@ -27,7 +36,9 @@ import { RouterView, RouterLink } from 'vue-router'
         <svg width="19" height="24">
           <use xlink:href="#icon-cart" />
         </svg>
-        <span class="header__count" aria-label="Количество товаров">3</span>
+        <span class="header__count" aria-label="Количество товаров">{{
+          basketStore.basketProducts.length
+        }}</span>
       </router-link>
     </div>
   </header>
@@ -110,7 +121,7 @@ import { RouterView, RouterLink } from 'vue-router'
           </a>
         </li>
       </ul>
-
+      ./stores/basketStore
       <span class="footer__copyright"> © 2020 Moire </span>
     </div>
   </footer>
