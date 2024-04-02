@@ -14,26 +14,6 @@ const quantity = ref(1)
 const productSize = ref<number>()
 const currentColor = ref<number>()
 
-// const currentColor = ref<{
-//   id: number
-//   color: {
-//     id: number
-//     title: string
-//     code: string
-//   }
-//   gallery: [
-//     {
-//       file: {
-//         url: string
-//         name: string
-//         originalName: string
-//         extension: string
-//         size: string
-//       }
-//     }
-//   ]
-// }>()
-
 //tabs
 const tabs = [
   { name: 'information', label: 'Информация о товаре' },
@@ -75,7 +55,7 @@ const addProduct = async (obj: IProductCart | undefined) => {
     productId: obj?.id,
     colorId: currentColor.value,
     sizeId: productSize.value,
-    quantity: quantity
+    quantity: quantity.value
   }
   await addProductBasket(newProduct)
 }
@@ -125,7 +105,7 @@ onMounted(() => {
           <form class="form" action="#" method="POST">
             <div class="item__row item__row--center">
               <div class="form__counter">
-                <button type="button" aria-label="Убрать один товар">
+                <button @click="quantity--" type="button" aria-label="Убрать один товар">
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-minus"></use>
                   </svg>
@@ -133,7 +113,7 @@ onMounted(() => {
 
                 <input type="text" :value="quantity" :v-model="quantity" />
 
-                <button type="button" aria-label="Добавить один товар">
+                <button @click="quantity++" type="button" aria-label="Добавить один товар">
                   <svg width="12" height="12" fill="currentColor">
                     <use xlink:href="#icon-plus"></use>
                   </svg>

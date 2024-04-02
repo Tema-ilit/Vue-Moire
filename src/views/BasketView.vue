@@ -18,7 +18,7 @@ const basketStore = useBasketStore()
 
       <div class="content__row">
         <h1 class="content__title">Корзина</h1>
-        <span class="content__info"> {{ basketStore.basketProducts.length }} товара </span>
+        <span class="content__info"> {{ basketStore.productLength() }} </span>
       </div>
     </div>
 
@@ -38,7 +38,9 @@ const basketStore = useBasketStore()
 
         <div class="cart__block">
           <p class="cart__desc">Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе</p>
-          <p class="cart__price">Итого: <span>4 070 ₽</span></p>
+          <p class="cart__price">
+            Итого: <span>{{ basketStore.totalPrice() }} ₽</span>
+          </p>
 
           <button class="cart__button button button--primery" type="submit">Оформить заказ</button>
         </div>

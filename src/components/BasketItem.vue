@@ -1,7 +1,32 @@
 <script setup lang="ts">
+import { dellProductBasket } from '@/api/basket'
 import type { IBasketProduct } from '@/types/basketProduct'
+import { ref, onMounted, watch } from 'vue'
+import { udateProductBasket } from '@/api/basket'
 
-defineProps<{ product: IBasketProduct }>()
+const prop = defineProps<{ product: IBasketProduct }>()
+
+const quantityCurent = ref<number>(0)
+
+const addProductLimit = () => {
+  quantityCurent.value++
+}
+
+const dellProductLimit = () => {
+  quantityCurent.value--
+}
+
+const deleteProduct = async (id: number) => {
+  await dellProductBasket(id)
+}
+
+onMounted(() => {
+  quantityCurent.value = prop.product.quantity
+})
+
+watch(quantityCurent, async () => {
+  await udateProductBasket(prop.product.id, quantityCurent.value)
+})
 </script>
 
 <template>
@@ -24,15 +49,15 @@ defineProps<{ product: IBasketProduct }>()
   <span class="product__code"> Артикул: {{ product.id }} </span>
 
   <div class="product__counter form__counter">
-    <button type="button" aria-label="Убрать один товар">
+    <button @click.prevent="dellProductLimit" type="button" aria-label="Убрать один товар">
       <svg width="10" height="10" fill="currentColor">
         <use xlink:href="#icon-minus"></use>
       </svg>
     </button>
 
-    <input type="text" :value="product.quantity" />
+    <input type="text" :v-model="product.quantity" :value="quantityCurent" />
 
-    <button type="button" aria-label="Добавить один товар">
+    <button @click.prevent="addProductLimit" type="button" aria-label="Добавить один товар">
       <svg width="10" height="10" fill="currentColor">
         <use xlink:href="#icon-plus"></use>
       </svg>
@@ -41,7 +66,12 @@ defineProps<{ product: IBasketProduct }>()
 
   <b class="product__price"> {{ product.price }} ₽ </b>
 
-  <button class="product__del button-del" type="button" aria-label="Удалить товар из корзины">
+  <button
+    @click.prevent="deleteProduct(product.id)"
+    class="product__del button-del"
+    type="button"
+    aria-label="Удалить товар из корзины"
+  >
     <svg width="20" height="20" fill="currentColor">
       <use xlink:href="#icon-close"></use>
     </svg>

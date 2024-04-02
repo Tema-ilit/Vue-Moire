@@ -39,3 +39,24 @@ export const addProductBasket = async (product: {
     throw new Error('err')
   }
 }
+
+//изменить кол-во товара в корзине
+export const udateProductBasket = async (id: number, limit: number) => {
+  await axios.put(BASE_URL + 'baskets/products', {
+    data: { basketItemId: id, quantity: limit },
+    params: { userAccessKey }
+  })
+}
+
+// удаляем товар из корзины
+export const dellProductBasket = async (id: number) => {
+  try {
+    await axios.delete(BASE_URL + '/baskets/products', {
+      data: { basketItemId: id },
+      params: { userAccessKey }
+    })
+    return true
+  } catch (error) {
+    console.log(error)
+  }
+}
