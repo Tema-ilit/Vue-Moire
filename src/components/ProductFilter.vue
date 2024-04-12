@@ -10,6 +10,10 @@ defineEmits(['update:price-filter'])
 
 const minPrice = ref<number>(0)
 const maxPrice = ref<number>(0)
+const category = ref<number>(0)
+const materials = ref<Array<string>>([])
+const seasons = ref<Array<string>>([])
+const colorId = ref<Array<string>>([])
 
 const filterMaterials = ref<IMaterials>()
 const filterSeasons = ref<IMaterials>()
@@ -39,6 +43,10 @@ onMounted(async () => {
 const reset = () => {
   maxPrice.value = 0
   minPrice.value = 0
+  category.value = 0
+  materials.value = []
+  seasons.value = []
+  colorId.value = []
 }
 </script>
 
@@ -59,8 +67,8 @@ const reset = () => {
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
-          <select class="form__select" type="text" name="category">
-            <option value="value1">Все категории</option>
+          <select class="form__select" type="text" name="category" v-model="category">
+            <option value="0">Все категории</option>
             <option v-for="option in filterCategories?.items" :key="option.id" :value="option.id">
               <SelectGlobal :category="option" />
             </option>
@@ -72,7 +80,7 @@ const reset = () => {
         <legend class="form__legend">Материал</legend>
         <ul class="check-list">
           <li v-for="item in filterMaterials?.items" :key="item.id" class="check-list__item">
-            <CheckInput :item="item" />
+            <CheckInput :item="item" v-model:modalFilters="materials" />
           </li>
         </ul>
       </fieldset>
@@ -81,7 +89,7 @@ const reset = () => {
         <legend class="form__legend">Коллекция</legend>
         <ul class="check-list">
           <li v-for="item in filterSeasons?.items" :key="item.id" class="check-list__item">
-            <CheckInput :item="item" />
+            <CheckInput :item="item" v-model:modalFilters="seasons" />
           </li>
         </ul>
       </fieldset>
@@ -89,14 +97,16 @@ const reset = () => {
       <button
         class="filter__submit button button--primery"
         type="submit"
-        @click.prevent="$emit('update:price-filter', minPrice, maxPrice)"
+        @click.prevent="
+          $emit('update:price-filter', category, materials, seasons, colorId, minPrice, maxPrice)
+        "
       >
         Применить
       </button>
       <button
         class="filter__reset button button--second"
         type="button"
-        @click.prevent="$emit('update:price-filter', 0, 0), reset()"
+        @click.prevent="$emit('update:price-filter'), reset()"
       >
         Сбросить
       </button>

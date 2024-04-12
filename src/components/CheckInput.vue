@@ -7,11 +7,18 @@ const prop = defineProps<{
     productsCount: number
   }
 }>()
+const modalFilters = defineModel('modalFilters')
 </script>
 
 <template>
   <label class="check-list__label">
-    <input class="check-list__check sr-only" type="checkbox" name="material" value="лен" />
+    <input
+      class="check-list__check sr-only"
+      type="checkbox"
+      name="material"
+      v-model="modalFilters"
+      :value="item.id"
+    />
     <span class="check-list__desc">
       {{ item.title }}
       <span>(3)</span>

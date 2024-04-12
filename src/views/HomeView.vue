@@ -5,10 +5,8 @@ import ProductFilter from '@/components/ProductFilter.vue'
 import ProductItem from '@/components/ProductItem.vue'
 import type { IPagination } from '@/types/global'
 import type { IProduct } from '@/types/products'
+import { num_word, word } from '@/utils/numWord'
 import { computed, onMounted, ref } from 'vue'
-// import { useProductsStore } from '@/stores/productsStore'
-
-// const productsStore = useProductsStore()
 
 const products = ref<IProduct[]>([])
 const pagination = ref<IPagination>({
@@ -17,44 +15,86 @@ const pagination = ref<IPagination>({
   total: 0
 })
 
+const wordProduct = computed(() => {
+  return num_word(pagination.value.total, word)
+})
+
 //Фильтр
+const categoryId = ref<number>(0)
+const materialIds = ref<Array<string>>([])
+const seasonIds = ref<Array<string>>([])
+const colorIds = ref<Array<string>>([])
 const minPrice = ref<number>(0)
 const maxPrice = ref<number>(0)
 
-const updatePrice = (a: number, b: number) => {
-  minPrice.value = a
-  maxPrice.value = b
-}
+const updatePrice = async (
+  category: number,
+  material: Array<string>,
+  season: Array<string>,
+  color: Array<string>,
+  minPric: number,
+  maxPric: number
+) => {
+  categoryId.value = category
+  materialIds.value = material
+  seasonIds.value = season
+  colorIds.value = color
+  minPrice.value = minPric
+  maxPrice.value = maxPric
 
-const filteredComputed = computed(() => {
-  return products.value.filter((product) => {
-    if (
-      (minPrice.value && product.price < minPrice.value) ||
-      (maxPrice.value && product.price > maxPrice.value)
-    )
-      return false
-    return true
-  })
-})
+  await loadProducts(
+    pagination.value.page,
+    categoryId.value,
+    materialIds.value,
+    seasonIds.value,
+    colorIds.value,
+    minPrice.value,
+    maxPrice.value
+  )
+}
 // конец фильтра
 
 //Загрузка товара
-const loadProducts = async (page: number) => {
-  const response = await getProducts(page)
+const loadProducts = async (
+  page: number,
+  category: number,
+  material: Array<string>,
+  season: Array<string>,
+  color: Array<string>,
+  minPric: number,
+  maxPric: number
+) => {
+  const response = await getProducts(page, category, material, season, color, minPric, maxPric)
 
-  products.value = response.products
+  products.value = response.items
   pagination.value = response.pagination
 }
 // end
 
 const changePage = async (page: number) => {
   if (page !== pagination.value.page) {
-    await loadProducts(page)
+    await loadProducts(
+      page,
+      categoryId.value,
+      materialIds.value,
+      seasonIds.value,
+      colorIds.value,
+      minPrice.value,
+      maxPrice.value
+    )
   }
 }
 
 onMounted(async () => {
-  await loadProducts(pagination.value.page)
+  await loadProducts(
+    pagination.value.page,
+    categoryId.value,
+    materialIds.value,
+    seasonIds.value,
+    colorIds.value,
+    minPrice.value,
+    maxPrice.value
+  )
 })
 </script>
 
@@ -63,7 +103,7 @@ onMounted(async () => {
     <div class="content__top">
       <div class="content__row">
         <h1 class="content__title">Каталог</h1>
-        <span class="content__info"> {{ pagination.total }} товара </span>
+        <span class="content__info"> {{ pagination.total + ' ' + wordProduct }} </span>
       </div>
     </div>
 
@@ -73,7 +113,7 @@ onMounted(async () => {
       <section class="catalog">
         <div>
           <ul class="catalog__list">
-            <li v-for="product in filteredComputed" :key="product.id" class="catalog__item">
+            <li v-for="product in products" :key="product.id" class="catalog__item">
               <ProductItem :product="product" />
             </li>
           </ul>

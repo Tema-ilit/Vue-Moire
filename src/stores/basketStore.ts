@@ -1,34 +1,53 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { IBasketProduct } from '@/types/basketProduct'
+import { addProductBasket, getBasket, dellProductBasket, udateProductBasket } from '@/api/basket'
+import { num_word, word } from '@/utils/numWord'
 
 export const useBasketStore = defineStore('BasketStore', () => {
   const basketProducts = ref<IBasketProduct[]>([])
 
-  const totalPrice = () => {
+  const totalPrice = computed(() => {
     return basketProducts.value.reduce((acc, item) => item.price * item.quantity + acc, 0)
+  })
+
+  const basketApi = async () => {
+    const basket = await getBasket()
+    basketProducts.value = basket.items
+  }
+
+  const addProductCart = async (product: {
+    productId: number
+    colorId: number
+    sizeId: number
+    quantity: number
+  }) => {
+    const newBasket = await addProductBasket(product)
+    basketProducts.value = newBasket
+  }
+
+  const deleteProduct = async (id: number) => {
+    const newBasket = await dellProductBasket(id)
+    basketProducts.value = newBasket
+  }
+
+  const updateProduct = async (id: number, limit: number) => {
+    const newBasket = await udateProductBasket(id, limit)
+    basketProducts.value = newBasket
   }
 
   const productLength = () => {
     const count = basketProducts.value.reduce((total, item) => total + item.quantity, 0)
-
-    switch (count) {
-      case 1:
-      case 21:
-      case 31:
-        return `${count} товар`
-      case 2:
-      case 22:
-      case 33:
-      case 3:
-      case 23:
-      case 4:
-      case 34:
-        return `${count} товара`
-      default:
-        return `${count} товаров`
-    }
+    return count + ' ' + num_word(count, word)
   }
 
-  return { basketProducts, totalPrice, productLength }
+  return {
+    basketProducts,
+    totalPrice,
+    addProductCart,
+    productLength,
+    basketApi,
+    deleteProduct,
+    updateProduct
+  }
 })

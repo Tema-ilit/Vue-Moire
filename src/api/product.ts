@@ -1,26 +1,31 @@
-import type { IPagination } from '@/types/global'
-import type { IProduct } from '@/types/products'
 import axios from 'axios'
 
 export const BASE_URL = 'https://vue-moire.skillbox.cc/api'
 
-interface IResponseProducts {
-  products: IProduct[]
-  pagination: IPagination
-}
-
-export const getProducts = async (page: number = 1): Promise<IResponseProducts> => {
+export const getProducts = async (
+  page: number = 1,
+  categoryId: number = 0,
+  materialIds: Array<string> = [],
+  seasonIds: Array<string> = [],
+  colorIds: Array<string> = [],
+  minPrice: number = 0,
+  maxPrice: number = 0
+) => {
   try {
-    const response = await axios.get(BASE_URL + '/products', {
-      params: { page: String(page), limit: String(13) }
+    const { data } = await axios.get(BASE_URL + '/products', {
+      params: {
+        page: page,
+        categoryId,
+        materialIds,
+        seasonIds,
+        colorIds,
+        minPrice,
+        maxPrice,
+        limit: String(7)
+      }
     })
 
-    const products: IProduct[] = response.data.items
-
-    return {
-      products: products,
-      pagination: response.data.pagination
-    }
+    return data
   } catch (err) {
     console.log(err)
     throw new Error('Ошибочка')

@@ -39,7 +39,7 @@ const basketStore = useBasketStore()
         <div class="cart__block">
           <p class="cart__desc">Мы&nbsp;посчитаем стоимость доставки на&nbsp;следующем этапе</p>
           <p class="cart__price">
-            Итого: <span>{{ basketStore.totalPrice() }} ₽</span>
+            Итого: <span>{{ basketStore.totalPrice }} ₽</span>
           </p>
 
           <button class="cart__button button button--primery" type="submit">Оформить заказ</button>

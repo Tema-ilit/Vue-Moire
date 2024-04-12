@@ -1,12 +1,15 @@
 <script setup lang="ts">
-import { dellProductBasket } from '@/api/basket'
 import type { IBasketProduct } from '@/types/basketProduct'
 import { ref, onMounted, watch } from 'vue'
-import { udateProductBasket } from '@/api/basket'
+import { useBasketStore } from '@/stores/basketStore'
 
 const prop = defineProps<{ product: IBasketProduct }>()
-
 const quantityCurent = ref<number>(0)
+const basket = useBasketStore()
+
+const changeInput = (e: number) => {
+  quantityCurent.value = e
+}
 
 const addProductLimit = () => {
   quantityCurent.value++
@@ -17,7 +20,7 @@ const dellProductLimit = () => {
 }
 
 const deleteProduct = async (id: number) => {
-  await dellProductBasket(id)
+  basket.deleteProduct(id)
 }
 
 onMounted(() => {
@@ -25,7 +28,7 @@ onMounted(() => {
 })
 
 watch(quantityCurent, async () => {
-  await udateProductBasket(prop.product.id, quantityCurent.value)
+  await basket.updateProduct(prop.product.id, quantityCurent.value)
 })
 </script>
 
@@ -55,7 +58,12 @@ watch(quantityCurent, async () => {
       </svg>
     </button>
 
-    <input type="text" :v-model="product.quantity" :value="quantityCurent" />
+    <input
+      type="text"
+      @input="changeInput($event.target?.value)"
+      :v-model="quantityCurent"
+      :value="product.quantity"
+    />
 
     <button @click.prevent="addProductLimit" type="button" aria-label="Добавить один товар">
       <svg width="10" height="10" fill="currentColor">
@@ -72,8 +80,23 @@ watch(quantityCurent, async () => {
     type="button"
     aria-label="Удалить товар из корзины"
   >
-    <svg width="20" height="20" fill="currentColor">
-      <use xlink:href="#icon-close"></use>
+    <svg
+      width="30px"
+      height="30px"
+      viewBox="0 0 32 32"
+      version="1.1"
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+    >
+      <g id="icomoon-ignore"></g>
+      <path
+        d="M6.576 6.576c-5.205 5.205-5.205 13.643 0 18.849s13.643 5.205 18.849-0c5.206-5.206 5.206-13.643 0-18.849s-13.643-5.205-18.849 0zM24.67 24.67c-4.781 4.781-12.56 4.781-17.341 0s-4.781-12.56 0-17.341c4.781-4.781 12.56-4.781 17.341 0s4.78 12.56-0 17.341z"
+        fill="#9D9D9D"
+      ></path>
+      <path
+        d="M10.722 9.969l-0.754 0.754 5.278 5.278-5.253 5.253 0.754 0.754 5.253-5.253 5.253 5.253 0.754-0.754-5.253-5.253 5.278-5.278-0.754-0.754-5.278 5.278z"
+        fill="#9D9D9D"
+      ></path>
     </svg>
   </button>
 </template>

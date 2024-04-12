@@ -24,7 +24,7 @@ export const addProductBasket = async (product: {
   quantity: number
 }) => {
   try {
-    await axios.post(
+    const { data } = await axios.post(
       BASE_URL + '/baskets/products',
       {
         productId: product.productId,
@@ -34,6 +34,7 @@ export const addProductBasket = async (product: {
       },
       { params: { userAccessKey } }
     )
+    return data.items
   } catch (error) {
     console.log(error)
     throw new Error('err')
@@ -42,20 +43,22 @@ export const addProductBasket = async (product: {
 
 //изменить кол-во товара в корзине
 export const udateProductBasket = async (id: number, limit: number) => {
-  await axios.put(BASE_URL + 'baskets/products', {
-    data: { basketItemId: id, quantity: limit },
-    params: { userAccessKey }
-  })
+  const { data } = await axios.put(
+    BASE_URL + '/baskets/products',
+    { basketItemId: id, quantity: limit },
+    { params: { userAccessKey } }
+  )
+  return data.items
 }
 
 // удаляем товар из корзины
 export const dellProductBasket = async (id: number) => {
   try {
-    await axios.delete(BASE_URL + '/baskets/products', {
+    const { data } = await axios.delete(BASE_URL + '/baskets/products', {
       data: { basketItemId: id },
       params: { userAccessKey }
     })
-    return true
+    return data.items
   } catch (error) {
     console.log(error)
   }

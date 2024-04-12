@@ -2,12 +2,10 @@
 import { RouterView, RouterLink } from 'vue-router'
 import { onMounted } from 'vue'
 import { useBasketStore } from '@/stores/basketStore'
-import { getBasket } from '@/api/basket'
 const basketStore = useBasketStore()
 //получаем корзину
 onMounted(async () => {
-  const basket = await getBasket()
-  basketStore.basketProducts = basket.items
+  basketStore.basketApi()
 })
 </script>
 

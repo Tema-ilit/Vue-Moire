@@ -1,18 +1,19 @@
 <!-- eslint-disable vue/valid-v-model -->
 <script setup lang="ts">
-import { addProductBasket } from '@/api/basket'
 import { getProductId } from '@/api/product'
 import GlobalColor from '@/components/GlobalColor.vue'
 import SizesList from '@/components/SizesList.vue'
 import type { IProductCart } from '@/types/productCart'
 import TabsGlobal from '@/utils/TabsGlobal.vue'
 import { computed, onMounted, ref } from 'vue'
+import { useBasketStore } from '@/stores/basketStore'
 
 const props = defineProps<{ id: number }>()
 const product = ref<IProductCart>()
 const quantity = ref(1)
 const productSize = ref<number>()
 const currentColor = ref<number>()
+const basketStore = useBasketStore()
 
 //tabs
 const tabs = [
@@ -50,6 +51,12 @@ const materialPercent = computed(() =>
   )
 )
 
+//отправляем товар на бек в корзину
+
+const changeInp = (e: number) => {
+  quantity.value = e
+}
+
 const addProduct = async (obj: IProductCart | undefined) => {
   const newProduct = {
     productId: obj?.id,
@@ -57,7 +64,7 @@ const addProduct = async (obj: IProductCart | undefined) => {
     sizeId: productSize.value,
     quantity: quantity.value
   }
-  await addProductBasket(newProduct)
+  await basketStore.addProductCart(newProduct)
 }
 
 //При рендере отправляем запрос на бек
@@ -111,7 +118,12 @@ onMounted(() => {
                   </svg>
                 </button>
 
-                <input type="text" :value="quantity" :v-model="quantity" />
+                <input
+                  type="text"
+                  @input="changeInp($event.target?.value)"
+                  :value="quantity"
+                  :v-model="quantity"
+                />
 
                 <button @click="quantity++" type="button" aria-label="Добавить один товар">
                   <svg width="12" height="12" fill="currentColor">
