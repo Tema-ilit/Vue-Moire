@@ -38,7 +38,8 @@ export const useBasketStore = defineStore('BasketStore', () => {
 
   const productLength = () => {
     const count = basketProducts.value.reduce((total, item) => total + item.quantity, 0)
-    return count + ' ' + num_word(count, word)
+    const words = num_word(count, word)
+    return { count, words }
   }
 
   return {

@@ -119,7 +119,6 @@ onMounted(async () => {
           </a>
         </li>
       </ul>
-      ./stores/basketStore
       <span class="footer__copyright"> © 2020 Moire </span>
     </div>
   </footer>

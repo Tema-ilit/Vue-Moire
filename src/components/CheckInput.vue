@@ -4,14 +4,26 @@ const prop = defineProps<{
     id: number
     title: string
     code: string
-    productsCount: number
+    productsCount?: number
   }
+  color?: boolean
 }>()
 const modalFilters = defineModel('modalFilters')
+const colorsFilters = defineModel('colorsFilters')
 </script>
 
 <template>
-  <label class="check-list__label">
+  <label v-if="color" class="colors__label">
+    <input
+      class="colors__radio sr-only"
+      type="checkbox"
+      :name="item.title"
+      :value="item.id"
+      v-model="colorsFilters"
+    />
+    <span class="colors__value" :style="{ 'background-color': item.code }"> </span>
+  </label>
+  <label v-else class="check-list__label">
     <input
       class="check-list__check sr-only"
       type="checkbox"

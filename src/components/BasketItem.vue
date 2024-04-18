@@ -42,13 +42,25 @@ watch(quantityCurent, async () => {
     />
   </div>
   <h3 class="product__title">{{ product.product.title }}</h3>
-  <p class="product__info product__info--color">
-    Цвет:
-    <span>
-      <i :style="{ 'background-color': product.color.color.code }"></i>
-      {{ product.color.color.title }}
-    </span>
-  </p>
+  <ul class="cart__list basket__list">
+    <li>
+      <p class="product__info product__info--color">
+        Цвет:
+        <span>
+          <i :style="{ 'background-color': product.color.color.code }"></i>
+          {{ product.color.color.title }}
+        </span>
+      </p>
+    </li>
+    <li>
+      <p class="product__info">
+        Размер:
+        <span>
+          {{ product.size.title }}
+        </span>
+      </p>
+    </li>
+  </ul>
   <span class="product__code"> Артикул: {{ product.id }} </span>
 
   <div class="product__counter form__counter">

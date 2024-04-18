@@ -1,23 +1,24 @@
 <script setup lang="ts">
-import type { ICategories } from '@/types/categories'
-import type { IMaterials } from '@/types/materials'
+import type { ICategories, IMaterials, IColors } from '@/types/filterTypes'
 import axios from 'axios'
 import { onMounted, ref } from 'vue'
 import SelectGlobal from './SelectGlobal.vue'
 import CheckInput from './CheckInput.vue'
 
-defineEmits(['update:price-filter'])
+defineEmits(['update:filter'])
 
 const minPrice = ref<number>(0)
 const maxPrice = ref<number>(0)
 const category = ref<number>(0)
 const materials = ref<Array<string>>([])
 const seasons = ref<Array<string>>([])
-const colorId = ref<Array<string>>([])
+const colors = ref<Array<string>>([])
+const filtered = ref<boolean>(false)
 
 const filterMaterials = ref<IMaterials>()
 const filterSeasons = ref<IMaterials>()
 const filterCategories = ref<ICategories>()
+const filterColors = ref<IColors[]>()
 
 const getFilterInfo = async (url: string) => {
   try {
@@ -30,14 +31,20 @@ const getFilterInfo = async (url: string) => {
   }
 }
 
+const filtertrue = () => {
+  filtered.value = true
+}
+
 onMounted(async () => {
   const materials = await getFilterInfo('/materials')
   const seasons = await getFilterInfo('/seasons')
   const categories = await getFilterInfo('/productCategories')
+  const colors = await getFilterInfo('/colors')
 
   filterMaterials.value = materials
   filterSeasons.value = seasons
   filterCategories.value = categories
+  filterColors.value = colors.items
 })
 
 const reset = () => {
@@ -46,7 +53,8 @@ const reset = () => {
   category.value = 0
   materials.value = []
   seasons.value = []
-  colorId.value = []
+  colors.value = []
+  filtered.value = false
 }
 </script>
 
@@ -77,6 +85,15 @@ const reset = () => {
       </fieldset>
 
       <fieldset class="form__block">
+        <legend class="form__legend">Цвет:</legend>
+        <ul class="colors colors--black">
+          <li v-for="item in filterColors" :key="item.id" class="colors__item">
+            <CheckInput :item="item" :color="true" v-model:colorsFilters="colors" />
+          </li>
+        </ul>
+      </fieldset>
+
+      <fieldset class="form__block">
         <legend class="form__legend">Материал</legend>
         <ul class="check-list">
           <li v-for="item in filterMaterials?.items" :key="item.id" class="check-list__item">
@@ -98,7 +115,8 @@ const reset = () => {
         class="filter__submit button button--primery"
         type="submit"
         @click.prevent="
-          $emit('update:price-filter', category, materials, seasons, colorId, minPrice, maxPrice)
+          $emit('update:filter', category, materials, seasons, colors, minPrice, maxPrice),
+            filtertrue()
         "
       >
         Применить
@@ -106,7 +124,9 @@ const reset = () => {
       <button
         class="filter__reset button button--second"
         type="button"
-        @click.prevent="$emit('update:price-filter'), reset()"
+        v-if="filtered"
+        :disabled="filtered ? false : true"
+        @click.prevent="$emit('update:filter'), reset()"
       >
         Сбросить
       </button>

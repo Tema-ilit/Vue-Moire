@@ -27,7 +27,7 @@ const colorIds = ref<Array<string>>([])
 const minPrice = ref<number>(0)
 const maxPrice = ref<number>(0)
 
-const updatePrice = async (
+const updateFilter = async (
   category: number,
   material: Array<string>,
   season: Array<string>,
@@ -108,7 +108,7 @@ onMounted(async () => {
     </div>
 
     <div class="content__catalog">
-      <ProductFilter @update:price-filter="updatePrice" />
+      <ProductFilter @update:filter="updateFilter" />
 
       <section class="catalog">
         <div>
