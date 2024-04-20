@@ -3,9 +3,11 @@ import { defineStore } from 'pinia'
 import type { IBasketProduct } from '@/types/basketProduct'
 import { addProductBasket, getBasket, dellProductBasket, udateProductBasket } from '@/api/basket'
 import { num_word, word } from '@/utils/numWord'
+import { getOrderInfo } from '@/api/order'
 
 export const useBasketStore = defineStore('BasketStore', () => {
   const basketProducts = ref<IBasketProduct[]>([])
+  const orderInfo = ref()
 
   const totalPrice = computed(() => {
     return basketProducts.value.reduce((acc, item) => item.price * item.quantity + acc, 0)
@@ -42,6 +44,11 @@ export const useBasketStore = defineStore('BasketStore', () => {
     return { count, words }
   }
 
+  const getOrder = async (id: number) => {
+    const order = await getOrderInfo(id)
+    orderInfo.value = order
+  }
+
   return {
     basketProducts,
     totalPrice,
@@ -49,6 +56,8 @@ export const useBasketStore = defineStore('BasketStore', () => {
     productLength,
     basketApi,
     deleteProduct,
-    updateProduct
+    updateProduct,
+    getOrder,
+    orderInfo
   }
 })

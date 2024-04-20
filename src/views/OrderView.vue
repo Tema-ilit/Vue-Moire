@@ -1,28 +1,60 @@
 <script setup lang="ts">
+import { userAccessKey } from '@/api/basket'
 import { getDelivery, getPlayment } from '@/api/order'
+import { BASE_URL } from '@/api/product'
 import { useBasketStore } from '@/stores/basketStore'
-import { ref, onMounted, computed } from 'vue'
-
-const choiceOfDelivery = ref<Array<{ id: number; title: string; price: number }>>([])
-const deliveryValue = ref<number>(1)
-const choiceOfPayment = ref<Array<{ id: number; title: string }>>([])
-const playmentValue = ref<number>(1)
+import axios from 'axios'
+import { ref, onMounted } from 'vue'
+import router from '@/router'
 
 const basketSrore = useBasketStore()
-const formErrorMessage = ref<string>('')
+const formErrorMessage = ref<{ address: string; email: string; name: string; phone: string }>()
+
+const formName = ref<string>('')
+const formAdress = ref<string>('')
+const formPhone = ref<string>('')
+const formEmail = ref<string>('')
+const formDelivery = ref<number>(1)
+const formPayment = ref<number>(1)
+const formComment = ref<string>('')
+
+const choiceOfDelivery = ref<Array<{ id: number; title: string; price: number }>>([])
+const choiceOfPayment = ref<Array<{ id: number; title: string }>>([])
 
 onMounted(async () => {
   choiceOfDelivery.value = await getDelivery()
-  choiceOfPayment.value = await getPlayment(deliveryValue.value)
+  choiceOfPayment.value = await getPlayment(formDelivery.value)
 })
 
 const playmentRefresh = async (id: number) => {
   choiceOfPayment.value = await getPlayment(id)
 
   if (choiceOfPayment.value.length < 2) {
-    playmentValue.value = 2
+    formPayment.value = 2
   } else {
-    playmentValue.value = 1
+    formPayment.value = 1
+  }
+}
+
+const order = async () => {
+  try {
+    const { data } = await axios.post(
+      BASE_URL + '/orders',
+      {
+        name: formName.value,
+        address: formAdress.value,
+        phone: formPhone.value,
+        email: formEmail.value,
+        deliveryTypeId: formDelivery.value,
+        paymentTypeId: formPayment.value,
+        comment: formComment.value
+      },
+      { params: { userAccessKey } }
+    )
+    router.push({ name: 'info', params: { id: data.id } })
+  } catch (error: any) {
+    formErrorMessage.value = error.response.data.error.request || {}
+    return
   }
 }
 </script>
@@ -48,7 +80,7 @@ const playmentRefresh = async (id: number) => {
     </div>
 
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+      <form class="cart__form form" action="#" method="POST" @submit.prevent="order">
         <div class="cart__field">
           <div class="cart__data">
             <label class="form__label">
@@ -57,8 +89,10 @@ const playmentRefresh = async (id: number) => {
                 type="text"
                 name="name"
                 placeholder="Введите ваше полное имя"
+                v-model="formName"
               />
               <span class="form__value">ФИО</span>
+              <span class="form__error">{{ formErrorMessage?.name }}</span>
             </label>
 
             <label class="form__label">
@@ -67,8 +101,10 @@ const playmentRefresh = async (id: number) => {
                 type="text"
                 name="address"
                 placeholder="Введите ваш адрес"
+                v-model="formAdress"
               />
               <span class="form__value">Адрес доставки</span>
+              <span class="form__error">{{ formErrorMessage?.address }}</span>
             </label>
 
             <label class="form__label">
@@ -77,14 +113,22 @@ const playmentRefresh = async (id: number) => {
                 type="tel"
                 name="phone"
                 placeholder="Введите ваш телефон"
+                v-model="formPhone"
               />
               <span class="form__value">Телефон</span>
-              <span class="form__error">Неверный формат телефона</span>
+              <span class="form__error">{{ formErrorMessage?.phone }}</span>
             </label>
 
             <label class="form__label">
-              <input class="form__input" type="email" name="email" placeholder="Введи ваш Email" />
+              <input
+                class="form__input"
+                type="email"
+                name="email"
+                placeholder="Введи ваш Email"
+                v-model="formEmail"
+              />
               <span class="form__value">Email</span>
+              <span class="form__error">{{ formErrorMessage?.email }}</span>
             </label>
 
             <label class="form__label">
@@ -92,6 +136,7 @@ const playmentRefresh = async (id: number) => {
                 class="form__input form__input--area"
                 name="comments"
                 placeholder="Ваши пожелания"
+                v-model="formComment"
               ></textarea>
               <span class="form__value">Комментарий к заказу</span>
             </label>
@@ -107,7 +152,7 @@ const playmentRefresh = async (id: number) => {
                     type="radio"
                     name="delivery"
                     :value="item.id"
-                    v-model="deliveryValue"
+                    v-model="formDelivery"
                     @click="playmentRefresh(item.id)"
                   />
                   <span class="options__value">
@@ -126,7 +171,7 @@ const playmentRefresh = async (id: number) => {
                     type="radio"
                     name="pay"
                     :value="item.id"
-                    v-model="playmentValue"
+                    v-model="formPayment"
                   />
                   <span class="options__value"> {{ item.title }} </span>
                 </label>
@@ -153,7 +198,7 @@ const playmentRefresh = async (id: number) => {
             </li>
           </ul>
 
-          <div class="cart__total" v-if="deliveryValue === 1">
+          <div class="cart__total" v-if="formDelivery === 1">
             <p>Доставка: <b>бесплатно</b></p>
             <p>
               Итого: <b>{{ basketSrore.productLength().count }}</b>
@@ -162,7 +207,7 @@ const playmentRefresh = async (id: number) => {
             </p>
           </div>
 
-          <div class="cart__total" v-if="deliveryValue === 2">
+          <div class="cart__total" v-if="formDelivery === 2">
             <p>Доставка: <b>курьером</b></p>
             <p>
               Итого: <b>{{ basketSrore.productLength().count }}</b>

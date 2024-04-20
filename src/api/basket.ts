@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { BASE_URL } from './product'
 
-const userAccessKey = 'e4de53928f53ba355dcfd6180414b7d0'
+export const userAccessKey = 'e4de53928f53ba355dcfd6180414b7d0'
 
 //получаем корзину
 export const getBasket = async () => {

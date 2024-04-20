@@ -1,21 +1,40 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useBasketStore } from '@/stores/basketStore'
+import type { IOrderInfo } from '@/types/orderInfo'
+import { onMounted, ref } from 'vue'
+
+const prop = defineProps<{ id: number }>()
+const basketOrderStore = useBasketStore()
+const orderInfo = ref<IOrderInfo>()
+
+onMounted(async () => {
+  await basketOrderStore.getOrder(prop.id)
+  orderInfo.value = basketOrderStore.orderInfo
+})
+</script>
 
 <template>
   <main class="content container">
     <div class="content__top">
       <ul class="breadcrumbs">
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="index.html"> Каталог </a>
+          <router-link :to="{ name: 'home' }" class="breadcrumbs__link" href="index.html">
+            Каталог
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
-          <a class="breadcrumbs__link" href="cart.html"> Корзина </a>
+          <router-link :to="{ name: 'basket' }" class="breadcrumbs__link" href="cart.html">
+            Корзина
+          </router-link>
         </li>
         <li class="breadcrumbs__item">
           <a class="breadcrumbs__link"> Оформление заказа </a>
         </li>
       </ul>
 
-      <h1 class="content__title">Заказ оформлен <span>№ 23621</span></h1>
+      <h1 class="content__title">
+        Заказ оформлен <span>№ {{ orderInfo?.id }}</span>
+      </h1>
     </div>
 
     <section class="cart">
@@ -30,49 +49,51 @@
           <ul class="dictionary">
             <li class="dictionary__item">
               <span class="dictionary__key"> Получатель </span>
-              <span class="dictionary__value"> Иванова Василиса Алексеевна </span>
+              <span class="dictionary__value">{{ orderInfo?.name }}</span>
             </li>
             <li class="dictionary__item">
               <span class="dictionary__key"> Адрес доставки </span>
-              <span class="dictionary__value"> Москва, ул. Ленина, 21, кв. 33 </span>
+              <span class="dictionary__value">{{ orderInfo?.address }} </span>
             </li>
             <li class="dictionary__item">
               <span class="dictionary__key"> Телефон </span>
-              <span class="dictionary__value"> 8 800 989 74 84 </span>
+              <span class="dictionary__value"> {{ orderInfo?.phone }} </span>
             </li>
             <li class="dictionary__item">
               <span class="dictionary__key"> Email </span>
-              <span class="dictionary__value"> lalala@mail.ru </span>
+              <span class="dictionary__value"> {{ orderInfo?.email }} </span>
             </li>
             <li class="dictionary__item">
               <span class="dictionary__key"> Способ оплаты </span>
-              <span class="dictionary__value"> картой при получении </span>
+              <span class="dictionary__value"> {{ orderInfo?.deliveryType.title }} </span>
             </li>
           </ul>
         </div>
 
         <div class="cart__block">
           <ul class="cart__orders">
-            <li class="cart__order">
-              <h3>Смартфон Xiaomi Redmi Note 7 Pro 6/128GB</h3>
-              <b>990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-            <li class="cart__order">
-              <h3>Гироскутер Razor Hovertrax 2.0ii</h3>
-              <b>1 990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-            <li class="cart__order">
-              <h3>Электрический дрифт-карт Razor Lil’ Crazy</h3>
-              <b>4 090 ₽</b>
-              <span>Артикул: 150030</span>
+            <li v-for="item in orderInfo?.basket.items" :key="item.product.id" class="cart__order">
+              <h3>
+                {{ item.product.title }}
+                <span>{{ '(' + item.quantity + ' ' + 'шт' + ')' }}</span>
+              </h3>
+              <b>{{ item.price }} ₽ </b>
+              <!-- <span>Размер: {{ item.size.title }}</span> -->
+              <p style="display: flex; flex-direction: column; margin: 0; gap: inherit">
+                <span>Размер: {{ item.size.title }}</span>
+                <span>Артикул: {{ item.id }}</span>
+              </p>
             </li>
           </ul>
 
           <div class="cart__total">
-            <p>Доставка: <b>бесплатно</b></p>
-            <p>Итого: <b>3</b> товара на сумму <b>4 070 ₽</b></p>
+            <p>
+              Доставка: <b>{{ orderInfo?.deliveryType.title }}</b>
+            </p>
+            <p>
+              Итого: <b>{{ orderInfo?.basket.items.length }}</b> товара на сумму
+              <b>{{ orderInfo?.totalPrice }} ₽</b>
+            </p>
           </div>
         </div>
       </form>

@@ -2,5 +2,5 @@
 # git add .
 # git remote add origin https://github.com/Tema-ilit/Vue-Moire.git
 git add .
-git commit -m 'version 2.2'
+git commit -m 'version 2.3'
 git push origin master
