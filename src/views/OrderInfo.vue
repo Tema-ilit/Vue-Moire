@@ -67,6 +67,10 @@ onMounted(async () => {
               <span class="dictionary__key"> Способ оплаты </span>
               <span class="dictionary__value"> {{ orderInfo?.deliveryType.title }} </span>
             </li>
+            <li v-if="orderInfo?.comment" class="dictionary__item">
+              <span class="dictionary__key"> Комментарий </span>
+              <span class="dictionary__value"> {{ orderInfo?.comment }} </span>
+            </li>
           </ul>
         </div>
 

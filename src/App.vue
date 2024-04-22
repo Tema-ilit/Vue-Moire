@@ -47,7 +47,7 @@ onMounted(async () => {
     <div class="footer__wrapper">
       <ul class="footer__links">
         <li>
-          <a class="footer__link" href="#"> Каталог </a>
+          <router-link :to="{ name: 'home' }" class="footer__link" href="#"> Каталог </router-link>
         </li>
         <li>
           <a class="footer__link" href="tel:88006009009"> 8 800 600 90 09 </a>

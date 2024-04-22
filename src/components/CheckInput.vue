@@ -33,7 +33,7 @@ const colorsFilters = defineModel('colorsFilters')
     />
     <span class="check-list__desc">
       {{ item.title }}
-      <span>(3)</span>
+      <span>({{ prop.item.productsCount }})</span>
     </span>
   </label>
 </template>

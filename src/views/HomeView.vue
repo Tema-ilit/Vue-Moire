@@ -5,8 +5,11 @@ import ProductFilter from '@/components/ProductFilter.vue'
 import ProductItem from '@/components/ProductItem.vue'
 import type { IPagination } from '@/types/global'
 import type { IProduct } from '@/types/products'
+import LoadSpinner from '@/utils/LoadSpinner.vue'
 import { num_word, word } from '@/utils/numWord'
 import { computed, onMounted, ref } from 'vue'
+
+const loading = ref<boolean>(false)
 
 const products = ref<IProduct[]>([])
 const pagination = ref<IPagination>({
@@ -64,10 +67,12 @@ const loadProducts = async (
   minPric: number,
   maxPric: number
 ) => {
+  loading.value = true
   const response = await getProducts(page, category, material, season, color, minPric, maxPric)
 
   products.value = response.items
   pagination.value = response.pagination
+  loading.value = false
 }
 // end
 
@@ -107,7 +112,8 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="content__catalog">
+    <LoadSpinner v-if="loading" />
+    <div v-else class="content__catalog">
       <ProductFilter @update:filter="updateFilter" />
 
       <section class="catalog">

@@ -7,6 +7,9 @@ import type { IProductCart } from '@/types/productCart'
 import TabsGlobal from '@/utils/TabsGlobal.vue'
 import { computed, onMounted, ref } from 'vue'
 import { useBasketStore } from '@/stores/basketStore'
+import LoadSpinner from '@/utils/LoadSpinner.vue'
+
+const loading = ref<boolean>(false)
 
 const props = defineProps<{ id: number }>()
 const product = ref<IProductCart>()
@@ -28,11 +31,13 @@ const changeTab = (tabName: string) => {
 
 //Полуваем продукт и передаем цвет по умолчанию
 const loadProduct = async (id: number) => {
+  loading.value = true
   const response = await getProductId(id)
 
   product.value = response
   currentColor.value = product.value?.colors[0].color.id
   productSize.value = product.value?.sizes[0].id
+  loading.value = false
 }
 
 const img = computed(() => {
@@ -91,7 +96,8 @@ onMounted(() => {
       </ul>
     </div>
 
-    <section class="item">
+    <LoadSpinner v-if="loading" />
+    <section v-else class="item">
       <div class="item__pics pics">
         <div class="pics__wrapper">
           <img width="570" height="570" :src="img" :alt="product?.title" />

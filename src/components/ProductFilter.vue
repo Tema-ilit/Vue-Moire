@@ -122,10 +122,9 @@ const reset = () => {
         Применить
       </button>
       <button
+        v-if="filtered"
         class="filter__reset button button--second"
         type="button"
-        v-if="filtered"
-        :disabled="filtered ? false : true"
         @click.prevent="$emit('update:filter'), reset()"
       >
         Сбросить

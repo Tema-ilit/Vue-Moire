@@ -52,6 +52,7 @@ const order = async () => {
       { params: { userAccessKey } }
     )
     router.push({ name: 'info', params: { id: data.id } })
+    basketSrore.basketApi()
   } catch (error: any) {
     formErrorMessage.value = error.response.data.error.request || {}
     return

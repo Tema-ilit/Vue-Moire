@@ -1,5 +1,4 @@
 import './assets/style.min.css'
-import 'vue-tel-input/vue-tel-input.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
