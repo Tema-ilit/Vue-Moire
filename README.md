@@ -1,46 +1,73 @@
-# Vue-Moire
+Добрый день, я начинающий веб разработчик и я написал интернет магазин, стилизация тут не очень, но это была не главная цель, основная цель это взаимодейсвтие с фреймворком vue.
 
-This template should help get you started developing with Vue 3 in Vite.
+Тут используется Pinia, axios, vue-router, написано все с использованием ts, ESLint и многое другое
 
-## Recommended IDE Setup
+Далее будет описано что реализовано в магазине:
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+Разработка интернет-магазина
+Moire (премиальное бельё) на Vue.js
+с использованием REST API.
 
-## Type Support for `.vue` Imports in TS
+![alt text](image-1.png)
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+Пользователь может выполнить на сайте
+следующие действия:
+\*Посмотреть список товаров по страницам.
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+\*Отфильтровать список товаров по параметрам.
 
-1. Disable the built-in TypeScript Extension
-    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+\*Посмотреть информацию о товаре на его детальной странице.
 
-## Customize configuration
+\*Добавить товар с выбранным цветом и размером в корзину.
 
-See [Vite Configuration Reference](https://vitejs.dev/config/).
+\*Изменить количество товаров в корзине.
 
-## Project Setup
+\*Удалить товары из корзины.
 
-```sh
-npm install
-```
+\*Внести данные на странице оформления заказа.
 
-### Compile and Hot-Reload for Development
+\*Выбрать способ доставки и оплаты.
 
-```sh
-npm run dev
-```
+\*Оформить заказ и посмотреть информацию о нём на странице успешного
+оформления заказа.
 
-### Type-Check, Compile and Minify for Production
+Состав продукта:
 
-```sh
-npm run build
-```
+\*Список товаров.
 
-### Lint with [ESLint](https://eslint.org/)
+\*Страница товара.
 
-```sh
-npm run lint
-```
+\*Корзина.
+
+\*Оформление заказа.
+
+\*Успешное оформление заказа.
+
+Фильтр
+
+Цена: Поля для ввода.
+
+Категория: Выпадающий список с перечнем категорий, к которым
+принадлежат товары. Единственный выбор. При выборе в выпадающем
+списке параметра «Все категории» на странице выводятся товары всех
+категорий.
+
+Свойства для фильтрации:
+
+Кнопка «Применить».
+
+Кнопка «Сбросить». Выводится при условии, что пользователем задан хотя бы
+один из параметров.
+
+Цвет: Чекбокс, множественный выбор.
+
+Материал: Чекбокс, множественный выбор.
+
+Коллекция: Чекбокс, множественный выбор.
+
+По клику на кнопку «Применить» производится проверка товаров на
+соответствие выбранных пользователем параметров. В списке товаров
+выводятся товары, соответствующие запросу пользователя. Фильтр между
+параметрами работает по принципу логического «и».
+
+Чтобы запустить его скачайте репозиторий, установите зависимости npm i и запустите проект npm run dev
