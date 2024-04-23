@@ -8,10 +8,11 @@
 Moire (премиальное бельё) на Vue.js
 с использованием REST API.
 
-![fdgsfgdgdfgsdg fdsgfgfdgdgf fgdgsdgsdfg](./src/assets/img/homePage.png)
+![Главная страница](./src/assets/img/homePage.png)
 
 Пользователь может выполнить на сайте
 следующие действия:
+
 \*Посмотреть список товаров по страницам.
 
 \*Отфильтровать список товаров по параметрам.
@@ -45,7 +46,7 @@ Moire (премиальное бельё) на Vue.js
 
 Фильтр
 
-![alt text](./src/assets/img/filter.png)
+![Фильтр](./src/assets/img/filter.png)
 
 Цена: Поля для ввода.
 
@@ -74,7 +75,7 @@ Moire (премиальное бельё) на Vue.js
 
 Страница продукта.
 
-![alt text](./src/assets/img/productPage.png)
+![Страница продукта](./src/assets/img/productPage.png)
 
 *Выводится фотография в зависмости от выбранного цвета
 *Можно выбрать цвет и размер товара
@@ -83,7 +84,7 @@ Moire (премиальное бельё) на Vue.js
 
 Корзина.
 
-![alt text](./src/assets/img/basketpage.png)
+![Страница корзины](./src/assets/img/basketpage.png)
 
 *Выводятся товары с информацией
 *Можно изменить кол-во товара
@@ -92,7 +93,7 @@ Moire (премиальное бельё) на Vue.js
 
 Оформление заказа.
 
-![alt text](./src/assets/img/orderPage.png)
+![Страница оформиления заказа](./src/assets/img/orderPage.png)
 
 *Присутствует валидация полей
 *При успшном отправлении отображается информация о заказе
@@ -100,7 +101,7 @@ Moire (премиальное бельё) на Vue.js
 
 Информация о заказе.
 
-![alt text](./src/assets/img/orderInfoPage.png)
+![Страниица информации о заказе](./src/assets/img/orderInfoPage.png)
 
 \*Отображается вся информация о заказе
 
