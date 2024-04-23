@@ -112,12 +112,11 @@ onMounted(async () => {
       </div>
     </div>
 
-    <LoadSpinner v-if="loading" />
-    <div v-else class="content__catalog">
+    <div class="content__catalog">
       <ProductFilter @update:filter="updateFilter" />
-
       <section class="catalog">
-        <div>
+        <LoadSpinner v-if="loading" />
+        <div v-else>
           <ul class="catalog__list">
             <li v-for="product in products" :key="product.id" class="catalog__item">
               <ProductItem :product="product" />
