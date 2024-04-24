@@ -59,8 +59,9 @@ const reset = () => {
 </script>
 
 <template>
-  <aside class="filter">
-    <form class="filter__form form" action="#" method="get">
+  <aside class="filter mr-5">
+    <h2 class="text-xl font-bold mb-4">Фильтр</h2>
+    <form class="filter__form form border border-slate-200" action="#" method="get">
       <fieldset class="form__block">
         <legend class="form__legend">Цена</legend>
         <label class="form__label form__label--price">

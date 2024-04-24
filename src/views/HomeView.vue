@@ -118,7 +118,11 @@ onMounted(async () => {
         <LoadSpinner v-if="loading" />
         <div v-else>
           <ul class="catalog__list">
-            <li v-for="product in products" :key="product.id" class="catalog__item">
+            <li
+              v-for="product in products"
+              :key="product.id"
+              class="bg-gray-200 border border-slate-100 rounded-3xl transition hover:-translate-y-2 hover:shadow-xl"
+            >
               <ProductItem :product="product" />
             </li>
           </ul>

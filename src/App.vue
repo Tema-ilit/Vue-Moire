@@ -10,12 +10,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <header class="header container">
+  <header class="header m-auto mt-6">
     <div class="header__wrapper">
       <span class="header__info">Каталог</span>
 
       <router-link :to="{ name: 'home' }" class="header__logo">
         <img
+          class="transition hover:-translate-y-1"
           src="./assets/img/svg/logo-moire.svg"
           alt="Логотип интернет магазина Moire"
           width="116"
@@ -27,7 +28,7 @@ onMounted(async () => {
 
       <router-link
         :to="{ name: 'basket' }"
-        class="header__cart"
+        class="header__cart transition hover:-translate-y-1 hover:shadow-xl"
         href="cart.html"
         aria-label="Корзина с товарами"
       >
@@ -43,7 +44,7 @@ onMounted(async () => {
 
   <RouterView />
 
-  <footer class="footer container">
+  <footer class="footer container bg-white">
     <div class="footer__wrapper">
       <ul class="footer__links">
         <li>

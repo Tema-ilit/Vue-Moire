@@ -22,15 +22,19 @@ onMounted(() => {
 <template>
   <div>
     <router-link :to="{ name: 'product', params: { id: product.id } }" class="catalog__pic">
-      <img :src="img" :alt="product.title" />
+      <img class="border-t rounded-t-3xl" :src="img" :alt="product.title" />
     </router-link>
 
-    <h3 class="catalog__title">
-      <a href="#"> {{ product.title }} </a>
-    </h3>
+    <div class="p-5">
+      <h3 class="catalog__title">
+        <router-link :to="{ name: 'product', params: { id: product.id } }" href="#">
+          {{ product.title }}
+        </router-link>
+      </h3>
 
-    <span class="catalog__price"> {{ product.price }} ₽ </span>
+      <span class="catalog__price"> {{ product.price }} ₽ </span>
 
-    <GlobalColor :colors="product.colors" v-model:colormodel="currentColor" />
+      <GlobalColor :colors="product.colors" v-model:colormodel="currentColor" />
+    </div>
   </div>
 </template>
