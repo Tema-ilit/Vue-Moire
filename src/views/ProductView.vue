@@ -18,6 +18,11 @@ const productSize = ref<number>()
 const currentColor = ref<number>()
 const basketStore = useBasketStore()
 
+const change = (e) => {
+  console.log(e)
+  quantity.value = e.value
+}
+
 //tabs
 const tabs = [
   { name: 'information', label: 'Информация о товаре' },
@@ -126,7 +131,7 @@ onMounted(() => {
 
                 <input
                   type="text"
-                  @input="changeInp($event.target?.value)"
+                  @input="change($event.target)"
                   :value="quantity"
                   :v-model="quantity"
                 />
