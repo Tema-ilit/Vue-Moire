@@ -13,15 +13,10 @@ const loading = ref<boolean>(false)
 
 const props = defineProps<{ id: number }>()
 const product = ref<IProductCart>()
-const quantity = ref(1)
-const productSize = ref<number>()
-const currentColor = ref<number>()
+const quantity = ref<number>(1)
+const productSize = ref<number>(1)
+const currentColor = ref<number>(1)
 const basketStore = useBasketStore()
-
-const change = (e) => {
-  console.log(e)
-  quantity.value = e.value
-}
 
 //tabs
 const tabs = [
@@ -40,8 +35,8 @@ const loadProduct = async (id: number) => {
   const response = await getProductId(id)
 
   product.value = response
-  currentColor.value = product.value?.colors[0].color.id
-  productSize.value = product.value?.sizes[0].id
+  currentColor.value = product.value?.colors[0].color.id || 1
+  productSize.value = product.value?.sizes[0].id || 1
   loading.value = false
 }
 
@@ -63,13 +58,9 @@ const materialPercent = computed(() =>
 
 //отправляем товар на бек в корзину
 
-const changeInp = (e: number) => {
-  quantity.value = e
-}
-
 const addProduct = async (obj: IProductCart | undefined) => {
   const newProduct = {
-    productId: obj?.id,
+    productId: obj?.id || 1,
     colorId: currentColor.value,
     sizeId: productSize.value,
     quantity: quantity.value
@@ -129,12 +120,7 @@ onMounted(() => {
                   </svg>
                 </button>
 
-                <input
-                  type="text"
-                  @input="change($event.target)"
-                  :value="quantity"
-                  :v-model="quantity"
-                />
+                <input type="text" v-model="quantity" />
 
                 <button @click="quantity++" type="button" aria-label="Добавить один товар">
                   <svg width="12" height="12" fill="currentColor">

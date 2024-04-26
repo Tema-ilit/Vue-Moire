@@ -7,9 +7,9 @@ const prop = defineProps<{ product: IBasketProduct }>()
 const quantityCurent = ref<number>(0)
 const basket = useBasketStore()
 
-const changeInput = (e: number) => {
-  quantityCurent.value = e
-}
+// const changeInput = (e: InputEvent) => {
+//   quantityCurent.value = e.value
+// }
 
 const addProductLimit = () => {
   quantityCurent.value++
@@ -70,12 +70,7 @@ watch(quantityCurent, async () => {
       </svg>
     </button>
 
-    <input
-      type="text"
-      @input="changeInput($event.target?.value)"
-      :v-model="quantityCurent"
-      :value="product.quantity"
-    />
+    <input type="text" v-model="quantityCurent" />
 
     <button @click.prevent="addProductLimit" type="button" aria-label="Добавить один товар">
       <svg width="10" height="10" fill="currentColor">
